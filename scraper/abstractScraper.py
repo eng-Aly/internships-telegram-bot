@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from utils import InternshipOffer
+from .utils import InternshipOffer
 
 
 class AbstractScraper(ABC):

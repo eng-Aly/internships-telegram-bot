@@ -16,14 +16,7 @@ class BrightSkiesScrapper(AbstractScraper):
             )    
             response.raise_for_status()
             return response.text
-
-        def get_offer(self) -> InternshipOffer:
-             pass
-        def get_offers(self) -> list[InternshipOffer]:
-             pass
-    
         def _query_jobs(self):
-
             query = """
             query getJobs {
                 jobs(pagination: { limit: 100 }) {
@@ -57,9 +50,30 @@ class BrightSkiesScrapper(AbstractScraper):
                 raise RuntimeError(
                     f"GraphQL error: {result['errors']}"
                 )
-            return result["data"]["jobs"]["data"]
+            return result["data"]["jobs"]["data"] 
+        def _parse_job(self, job):
+
+            attributes = job["attributes"]
+
+            return InternshipOffer(
+                company=self.name,
+                title=attributes["title"],
+                location=attributes["location"],
+                job_type=attributes["job_type"],
+                url=f"https://brightskiesinc.com/careers/jobs/{job["id"]}"
+            )
+        def get_offers(self):
+
+            jobs = self._query_jobs()
+
+            return [
+                self._parse_job(job)
+                for job in jobs
+            ]
+        def get_offer(self) -> InternshipOffer:
+             pass
 
     
 if __name__=="__main__":
      obj=BrightSkiesScrapper()
-     print(obj._query_jobs())
+     print(obj.get_offers())

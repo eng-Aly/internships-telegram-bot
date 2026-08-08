@@ -8,4 +8,5 @@ class InternshipOffer:
     title: str
     url: str
     location: str | None = None
+    job_type: str | None = None
     deadline: datetime | None = None

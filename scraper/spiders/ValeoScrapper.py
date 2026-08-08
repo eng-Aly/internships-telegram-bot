@@ -45,11 +45,51 @@ class ValeoScrapper(AbstractScraper):
         response = requests.post(self.corporate_url, json=payload, timeout=10)
         response.raise_for_status()
         return response.json()
+    def _build_job_url(self, external_path: str) -> str:
+        job_path = external_path.removeprefix("/job/")
+
+        return (
+            "https://valeo.wd3.myworkdayjobs.com"
+            f"/en-US/valeo_jobs/jobs/details/{job_path}"
+            f"?locationCountry={self.EGYPT_LOCATION_ID}"
+        )
+    def get_offers(self) -> list[jobOffer]:
+        offers = []
+        offset = 0
+        limit = 20
+
+        while True:
+            response = self._fetch_jobs(
+                offset=offset,
+                limit=limit
+            )
+            jobs = response.get("jobPostings", [])
+            if not jobs:
+                break
+            for job in jobs:
+                offers.append(
+                    jobOffer(
+                        company=self.name,
+                        title=job["title"],
+                        location=job["locationsText"],
+                        job_type=None,
+                        url=self._build_job_url(job["externalPath"])
+                            
+                    )
+                )
+            offset += len(jobs)
+            total = response.get("total", 0)
+
+            if offset >= total:
+                break
+
+        return offers    
     def get_offers_keyword(self, keyword):
-        pass
-    def get_offers(self):
         pass
 
 if __name__ =="__main__":
     obj = ValeoScrapper()
+    print("------------------------fetch method-------------------------------------")
     print(obj._fetch_jobs())
+    print("--------------get jobs method--------------------------------------------")
+    print(obj.get_offers())

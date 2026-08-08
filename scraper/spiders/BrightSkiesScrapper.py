@@ -1,6 +1,6 @@
 from scraper.abstractScraper import AbstractScraper
-import requests
 from scraper.utils import jobOffer
+import requests
 
 
 class BrightSkiesScrapper(AbstractScraper):

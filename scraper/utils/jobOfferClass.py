@@ -3,7 +3,7 @@ from datetime import datetime
 
 
 @dataclass
-class InternshipOffer:
+class jobOffer:
     company: str
     title: str
     url: str

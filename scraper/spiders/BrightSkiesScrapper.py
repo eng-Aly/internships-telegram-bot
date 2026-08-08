@@ -1,6 +1,6 @@
 from scraper.abstractScraper import AbstractScraper
 import requests
-from scraper.utils import InternshipOffer
+from scraper.utils import jobOffer
 
 
 class BrightSkiesScrapper(AbstractScraper):
@@ -55,25 +55,37 @@ class BrightSkiesScrapper(AbstractScraper):
 
             attributes = job["attributes"]
 
-            return InternshipOffer(
+            return jobOffer(
                 company=self.name,
                 title=attributes["title"],
                 location=attributes["location"],
                 job_type=attributes["job_type"],
                 url=f"https://brightskiesinc.com/careers/jobs/{job["id"]}"
             )
-        def get_offers(self):
+        def get_offers(self)   ->list[jobOffer]:
 
             jobs = self._query_jobs()
-
             return [
                 self._parse_job(job)
                 for job in jobs
             ]
-        def get_offer(self) -> InternshipOffer:
-             pass
+        def get_offers_keyword(self, keyword) -> list[jobOffer]:
+            jobs_list = self.get_offers()
 
-    
+            keyword = keyword.strip().lower()
+
+            return [
+                job
+                for job in jobs_list
+                if (
+                    keyword in job.title.lower()
+                    or keyword in job.location.lower()
+                    or keyword in job.job_type.lower()
+                )
+            ]
 if __name__=="__main__":
      obj=BrightSkiesScrapper()
+     print("-------------------------------all offers-----------------------------------")
      print(obj.get_offers())
+     print("-----------------------------offers with keywords---------------------------")
+     print(obj.get_offers_keyword("HPC"))

@@ -1,3 +1,3 @@
-from .internshipOfferClass import InternshipOffer
+from .jobOfferClass import jobOffer
 
-__all__=['InternshipOffer']
+__all__=['jobOffer']

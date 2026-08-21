@@ -15,6 +15,6 @@ client = TelegramClient()
 
 result = client.send_message(
     chat_id=int(os.environ["TELEGRAM_CHAT_ID"]),
-    text="hello",
+    text="you made me",
 )
 print(result)
